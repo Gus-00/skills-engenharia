@@ -1,0 +1,17 @@
+# Banco completo da coleta (contém o texto integral dos anúncios) - fica só no computador local.
+# O painel publicado usa dados/painel.db, gerado por analise.py.
+dados/vagas.db
+dados/vagas.db-*
+dados/painel.db-*
+
+# Anotações de validação (trabalho em andamento)
+validacao/
+
+# Ambiente local
+__pycache__/
+*.pyc
+.deps_ok
+.claude/
+.vscode/
+.idea/
+*.log

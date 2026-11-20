@@ -1,0 +1,28 @@
+﻿skill;tipo;categoria;n_vagas;pct_vagas;ic95_inf;ic95_sup
+Comunicação;soft;Comunicação e Relacionamento;425;22,97;21,11;24,94
+Proatividade;soft;Atitude e Autogestão;302;16,32;14,71;18,08
+Trabalho em equipe;soft;Comunicação e Relacionamento;275;14,86;13,32;16,56
+Liderança;soft;Liderança e Gestão de pessoas;193;10,43;9,12;11,91
+Pensamento analítico;soft;Pensamento e Resolução;143;7,73;6,6;9,04
+Resolução de problemas;soft;Pensamento e Resolução;143;7,73;6,6;9,04
+Organização / Gestão do tempo;soft;Atitude e Autogestão;120;6,49;5,45;7,7
+Aprendizado contínuo;soft;Atitude e Autogestão;116;6,27;5,25;7,47
+Comprometimento / Responsabilidade;soft;Atitude e Autogestão;95;5,14;4,22;6,24
+Autonomia;soft;Atitude e Autogestão;86;4,65;3,78;5,71
+Negociação;soft;Comunicação e Relacionamento;79;4,27;3,44;5,29
+Tomada de decisão;soft;Liderança e Gestão de pessoas;77;4,16;3,34;5,17
+Relacionamento interpessoal;soft;Comunicação e Relacionamento;68;3,68;2,91;4,63
+Atenção aos detalhes;soft;Pensamento e Resolução;66;3,57;2,81;4,51
+Foco em resultados;soft;Atitude e Autogestão;65;3,51;2,77;4,45
+Visão sistêmica;soft;Pensamento e Resolução;51;2,76;2,1;3,61
+Gestão de stakeholders;soft;Comunicação e Relacionamento;49;2,65;2,01;3,48
+Criatividade / Inovação;soft;Pensamento e Resolução;47;2,54;1,92;3,36
+Adaptabilidade / Flexibilidade;soft;Atitude e Autogestão;42;2,27;1,68;3,05
+Mentoria / Desenvolvimento de pessoas;soft;Liderança e Gestão de pessoas;25;1,35;0,92;1,99
+Ética;soft;Atitude e Autogestão;24;1,3;0,87;1,92
+Trabalho sob pressão;soft;Atitude e Autogestão;19;1,03;0,66;1,6
+Pensamento crítico;soft;Pensamento e Resolução;18;0,97;0,62;1,53
+Influência;soft;Liderança e Gestão de pessoas;17;0,92;0,57;1,47
+Gestão de conflitos;soft;Liderança e Gestão de pessoas;7;0,38;0,18;0,78
+Orientação ao cliente;soft;Comunicação e Relacionamento;5;0,27;0,12;0,63
+Empatia;soft;Comunicação e Relacionamento;4;0,22;0,08;0,55
