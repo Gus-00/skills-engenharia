@@ -3,6 +3,7 @@ from datetime import date
 
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
 import plotly.io as pio
 import streamlit as st
 
@@ -15,10 +16,28 @@ st.set_page_config(page_title="Skills em Engenharia", page_icon="📊", layout="
 
 # ---- visual: fundo branco com detalhes azuis (o tema base fica em .streamlit/config.toml) ----
 AZUL = "#1565C0"
-PALETA = ["#0D47A1", "#1E88E5", "#64B5F6", "#1565C0", "#42A5F5", "#0B3C6E", "#90CAF9", "#2F6DB5",
-          "#5C9BD6", "#BBDEFB"]
+TINTA, TINTA_2, TINTA_MUDA, GRADE = "#0b0b0b", "#52514e", "#898781", "#e1e0d9"
+
+# Cores das categorias: paleta categórica testada para daltonismo (protan/deutan/tritan).
+# Cada categoria tem sempre a mesma cor, em qualquer filtro (a cor segue a categoria, não a posição).
+# "Idiomas" (9ª categoria de hard skills) fica em cinza neutro.
+AZ, LA, VE, AM, RS, VD, VI, VM, CZ = ("#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4",
+                                      "#008300", "#6250d6", "#e34948", TINTA_MUDA)
+CORES_CATEGORIA = {
+    # hard skills
+    "Ferramentas de gestão e dados": AZ, "Gestão e Melhoria contínua": LA, "Civil e Construção": VE,
+    "Software CAD/CAE/BIM": AM, "Programação e TI": VI, "Mecânica e Manufatura": RS,
+    "Automação e Elétrica": VD, "Normas e Certificações": VM, "Idiomas": CZ,
+    # soft skills
+    "Comunicação e Relacionamento": AZ, "Atitude e Autogestão": LA, "Pensamento e Resolução": VE,
+    "Liderança e Gestão de pessoas": VI,
+    # requisitos
+    "Registro e documentação": AZ, "Formação": LA, "Disponibilidade": VE,
+}
+# Escala sequencial (um só tom, do claro ao escuro) para o mapa de calor
+ESCALA_AZUL = ["#fcfcfb", "#cde2fb", "#9ec5f4", "#6da7ec", "#3987e5", "#256abf", "#184f95", "#0d366b"]
+
 pio.templates.default = "plotly_white"
-px.defaults.color_discrete_sequence = PALETA
 st.markdown(f"""
 <style>
   h1, h2, h3 {{ color: #0D3B66; }}
@@ -139,14 +158,31 @@ def grafico(tipo, titulo):
     if r.empty:
         st.info("Nenhuma ocorrência.")
         return
+    r = r.assign(ic_inf=r.pct - r.erro_inf, ic_sup=r.pct + r.erro_sup)
+    ordem_cat = [c for c in CORES_CATEGORIA if c in set(r.categoria)]
     fig = px.bar(r.iloc[::-1], x="pct", y="skill", color="categoria", orientation="h",
                  error_x="erro_sup", error_x_minus="erro_inf",
+                 color_discrete_map=CORES_CATEGORIA, category_orders={"categoria": ordem_cat},
                  labels={"pct": "% das vagas", "skill": "", "categoria": "Categoria"},
-                 hover_data={"vagas": True}, title=titulo)
-    fig.update_traces(error_x_color="#5F7A99")
-    fig.update_layout(height=max(420, 32 * len(r)), yaxis={"dtick": 1, "categoryorder": "array",
-                      "categoryarray": list(r.skill[::-1])}, legend={"orientation": "h", "y": -0.15},
-                      title_font_color="#0D3B66")
+                 custom_data=["categoria", "vagas", "ic_inf", "ic_sup"], title=titulo)
+    fig.update_traces(
+        error_x_color=TINTA_MUDA, error_x_thickness=1, error_x_width=3,
+        hovertemplate="<b>%{y}</b><br>%{customdata[0]}<br>%{x:.1f}% das vagas (%{customdata[1]} vagas)"
+                      "<br>IC 95%: %{customdata[2]:.1f}–%{customdata[3]:.1f}%<extra></extra>")
+    # rótulo do valor logo depois da barra de erro, para não sobrepor
+    fig.add_trace(go.Scatter(x=r.ic_sup, y=r.skill, mode="text", text=[f"{p:.0f}%" for p in r.pct],
+                             textposition="middle right", textfont={"color": TINTA_2, "size": 12},
+                             showlegend=False, hoverinfo="skip", cliponaxis=False))
+    fig.update_layout(
+        height=max(420, 30 * len(r)), bargap=0.3, barcornerradius=4,
+        yaxis={"dtick": 1, "categoryorder": "array", "categoryarray": list(r.skill[::-1]),
+               "tickfont": {"color": TINTA}},
+        xaxis={"gridcolor": GRADE, "zeroline": True, "zerolinecolor": "#c3c2b7", "ticksuffix": "%",
+               "title": None, "range": [0, r.ic_sup.max() * 1.15], "tickfont": {"color": TINTA_MUDA}},
+        legend={"orientation": "h", "x": 0, "y": 1.0, "yanchor": "bottom", "title": {"text": ""},
+                "font": {"color": TINTA_2}},
+        margin={"t": 110},
+        title_font_color="#0D3B66", hoverlabel={"bgcolor": "white", "font_color": TINTA})
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -171,8 +207,10 @@ with aba_cmp:
         t = 100 * t / tot[t.columns]
         t = t.loc[t.max(axis=1).sort_values(ascending=False).index[:top_n]]
         t.columns = [f"{c} (n={tot[c]})" for c in t.columns]
-        fig = px.imshow(t.round(0), text_auto=True, aspect="auto", color_continuous_scale="Blues",
-                        labels={"color": "% vagas"})
+        fig = px.imshow(t.round(0), text_auto=True, aspect="auto", color_continuous_scale=ESCALA_AZUL,
+                        labels={"color": "% vagas", "x": "", "y": ""})
+        fig.update_traces(xgap=2, ygap=2,
+                          hovertemplate="<b>%{y}</b><br>%{x}<br>%{z:.0f}% das vagas<extra></extra>")
         fig.update_layout(height=max(400, 28 * len(t)))
         st.plotly_chart(fig, use_container_width=True)
         st.caption("Só subáreas com 10 ou mais vagas no filtro atual.")
